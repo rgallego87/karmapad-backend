@@ -14,7 +14,7 @@ const app = express();
 
 app.use(cors({
   credentials: true,
-  origin: [process.env.CORS_URL] // .env!!
+  origin: [process.env.CORS_URL]
 }));
 
 app.use(session({
@@ -22,17 +22,13 @@ app.use(session({
     mongooseConnection: mongoose.connection,
     ttl: 24 * 60 * 60 // 1 day
   }),
-  secret: 'authlivecode',
+  secret: 'karmapad',
   resave: true,
   saveUninitialized: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
-
-// // view engine setup (NO USAMOS VISTAS PARA ANGULAR - SOLO BACK Y JSON)
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -47,7 +43,6 @@ app.use((req, res, next) => {
   res.status(404).json({code: 'not found'});
 });
 
-// Echar un vistazo a npm express-boom
 app.use((err, req, res, next) => {
   // always log the error
   console.error('ERROR', req.method, req.path, err);
