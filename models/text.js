@@ -9,7 +9,7 @@ const textoSchema = new Schema({
     type: String,
     required: true
   },
-  body: {
+  textBody: {
     type: String,
     required: true
   },
