@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID;
 const Texto = require('../models/text');
+const getFromAzure = require('../helper');
 
 // POST Creating on DB new Text
 router.post('/create', (req, res, next) => {
@@ -41,6 +42,34 @@ router.get('/:id', (req, res, next) => {
         }
       })
       .catch(next);      
+});
+
+// POST to Microsoft Azure Cognitive Sentiment API
+router.post('/:id/analyze', (req, res, next) => {   
+  const { id } = req.params;    
+  Texto.findById(id)
+      .then((text) => {        
+        if(!text) {
+          return res.status(404).json({code: 'not-found'});
+        } else {          
+        // Parsing text to document Microsoft Azure API pattern
+            let preDocuments = { 'documents': [
+          { 'id': id, 'language': 'es', 'text': text.textBody }          
+          ]};
+          console.log(preDocuments);
+
+          getFromAzure(preDocuments)
+            .then((response) => {
+              console.log("respuesta", response)
+              res.status(200).json(response)
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+        }
+      })
+      .catch(next);    
+
 });
 
 module.exports = router;
