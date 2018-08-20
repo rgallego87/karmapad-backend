@@ -46,30 +46,37 @@ router.get('/:id', (req, res, next) => {
 
 // POST to Microsoft Azure Cognitive Sentiment API
 router.post('/:id/analyze', (req, res, next) => {   
-  const { id } = req.params;    
+  const { id } = req.params;
+  let language = '';
+  let textFound = '';     
   Texto.findById(id)
-      .then((text) => {        
-        if(!text) {
-          return res.status(404).json({code: 'not-found'});
-        } else {          
-        // Parsing text to document Microsoft Azure API pattern
-            let preDocuments = { 'documents': [
-          { 'id': id, 'language': 'es', 'text': text.textBody }          
-          ]};
-          console.log(preDocuments);
-
-          getFromAzure(preDocuments)
-            .then((response) => {
-              console.log("respuesta", response)
-              res.status(200).json(response)
-            })
-            .catch((error) => {
-              console.log(error);
-            })
-        }
-      })
-      .catch(next);    
-
+    .then(text => {        
+      if(!text) {
+        throw {code: 'not-found', status: 404};
+      }
+      textFound = text;
+    })
+    .then(() => {      
+      let preDocuments_lang = { 'documents': [
+        { 'id': id, 'text': textFound.textBody }          
+      ]};         
+      return getFromAzure(preDocuments_lang,'languages');        
+    })
+    .then(langDetected => {
+      language = langDetected['documents'][0].detectedLanguages[0].iso6391Name;           
+      let preDocuments = { 'documents': [
+        { 'id': id, 'language': language, 'text': textFound.textBody }          
+      ]};      
+      return getFromAzure(preDocuments,'sentiment');
+    })
+    .then((response) => {                    
+      res.status(200).json(response);
+    }) 
+    .catch(error => {
+      console.log(error);
+      return res.status(error.status).send(error.code);
+    });
 });
+
 
 module.exports = router;

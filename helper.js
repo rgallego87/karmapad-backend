@@ -2,16 +2,16 @@
 const https = require ('https');
 const accessKey = '5311744487344b86a34e8a8add74294d';
 const uri = 'westeurope.api.cognitive.microsoft.com';
-const path = '/text/analytics/v2.0/sentiment';
+const path = '/text/analytics/v2.0/';
 
-function getFromAzure(documents) {
+function getFromAzure(documents, type) {
   let body = JSON.stringify(documents);
   let request_params = {
     method: 'POST',
     hostname: uri,
-    path: path,
+    path: `${path}${type}`,
     headers: {
-        'Ocp-Apim-Subscription-Key': accessKey,
+      'Ocp-Apim-Subscription-Key': accessKey,
     }
   };
   
@@ -25,8 +25,7 @@ function getFromAzure(documents) {
       
       response.on('end', function () {
         let body_ = JSON.parse (body);
-        let body__ = JSON.stringify (body_, null, '  ');                
-        // console.log (body__);
+        let body__ = JSON.stringify (body_, null, '  ');                        
         resolve(body_);
       });
       
