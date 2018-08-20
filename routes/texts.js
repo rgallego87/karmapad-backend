@@ -69,7 +69,8 @@ router.post('/:id/analyze', (req, res, next) => {
       ]};      
       return getFromAzure(preDocuments,'sentiment');
     })
-    .then((response) => {                    
+    .then((documentProcessed) => {
+      let response = {documentProcessed, language};
       res.status(200).json(response);
     }) 
     .catch(error => {
