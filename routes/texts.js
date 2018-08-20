@@ -23,11 +23,24 @@ router.get('/', (req, res, next) => {
   const oid = req.session.currentUser._id;  
   Texto.find({'owner': ObjectId(oid)})
       .populate('owner')
-      .then((data) => {
-        console.log(data);
+      .then((data) => {        
         res.status(200).json(data);
       })
       .catch(next);
+});
+
+// GET rendering by text id a single text
+router.get('/:id', (req, res, next) => {
+  const { id } = req.params;    
+  Texto.findById(id)
+      .then((text) => {        
+        if(!text) {
+          return res.status(404).json({code: 'not-found'});
+        } else {          
+          return res.status(200).json(text);
+        }
+      })
+      .catch(next);      
 });
 
 module.exports = router;
