@@ -47,7 +47,10 @@ router.get('/:id', (req, res, next) => {
 // POST to Microsoft Azure Cognitive Sentiment API
 router.post('/:id/analyze', (req, res, next) => {   
   const { id } = req.params;
-  let language = '';
+  let language = {};
+  let keyPhrases = {};
+  let entities = {};
+  let documentProcessed = {};
   let textFound = '';     
   Texto.findById(id)
     .then(text => {        
@@ -62,15 +65,43 @@ router.post('/:id/analyze', (req, res, next) => {
       ]};         
       return getFromAzure(preDocuments_lang,'languages');        
     })
-    .then(langDetected => {
-      language = langDetected['documents'][0].detectedLanguages[0].iso6391Name;           
-      let preDocuments = { 'documents': [
-        { 'id': id, 'language': language, 'text': textFound.textBody }          
+    .then(langDetected => {      
+      language = langDetected['documents'][0].detectedLanguages[0];           
+      let preDocuments_sentiment = { 'documents': [
+        { 'id': id, 'language': language.iso6391Name, 'text': textFound.textBody }          
       ]};      
-      return getFromAzure(preDocuments,'sentiment');
+      return getFromAzure(preDocuments_sentiment,'sentiment');
     })
-    .then((documentProcessed) => {
-      let response = {documentProcessed, language};
+    .then(sentimentProcessed => {
+      documentProcessed = sentimentProcessed;
+    })
+    .then(() => {                             
+      let preDocuments_keyPhrases = { 'documents': [
+        { 'id': id, 'language': language.iso6391Name, 'text': textFound.textBody }          
+      ]};      
+      return getFromAzure(preDocuments_keyPhrases,'keyPhrases');
+    })
+    .then(document => {
+      keyPhrases = document['documents'][0].keyPhrases;            
+    })
+    .then(() => {            
+      if (language.iso6391Name === 'en') {
+        let preDocuments_entities = { 'documents': [
+          { 'id': id, 'language': 'en', 'text': textFound.textBody }          
+        ]};      
+        return getFromAzure(preDocuments_entities,'entities');
+      }
+    })
+    .then(document => {
+      if (document) {
+        entities = document['documents'][0].entities;      
+      }      
+    })
+    .then(() => {      
+      let response = {  documentProcessed, 
+                        language: language.name, 
+                        keyPhrases: keyPhrases,
+                        entities: entities };
       res.status(200).json(response);
     }) 
     .catch(error => {
