@@ -1,6 +1,7 @@
 // Microsoft Azure Cognitive API
 const https = require ('https');
-const accessKey = '5311744487344b86a34e8a8add74294d';
+require('dotenv').config();
+const accessKey = process.env.AZURE_API_KEY;
 const uri = 'westeurope.api.cognitive.microsoft.com';
 const path = '/text/analytics/v2.0/';
 
