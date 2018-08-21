@@ -14,7 +14,7 @@ router.post('/create', (req, res, next) => {
 
   Texto.create({ owner, title, textBody })
       .then(() => {          
-        res.status(200).json(Texto);
+        res.status(200).send();
       })
       .catch(next);      
 });
@@ -42,6 +42,15 @@ router.get('/:id', (req, res, next) => {
         }
       })
       .catch(next);      
+});
+
+// POST Deleting a single text on DB
+router.post('/:id/delete', (req, res, next) => {  
+  Texto.findByIdAndRemove(req.params.id)
+    .then(() => {              
+      res.status(204).send();
+    })
+    .catch(next); 
 });
 
 // POST to Microsoft Azure Cognitive Sentiment API
