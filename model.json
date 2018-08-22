@@ -1,0 +1,54 @@
+{
+  "lang": "es",
+  "description": "With some things in general spanish",
+  "categories": [
+    {
+      "name": "Politica",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Politica": 1.0
+      }
+    },
+    {
+      "name": "Economia",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Economia": 1.0
+      }
+    },
+    {
+      "name": "Negocios",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Negocio": 1.0
+      }
+    },
+    {
+      "name": "Entretenimiento",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Entretenimiento": 1.0
+      }
+    },
+    {
+      "name": "Deportes",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Deporte": 1.0
+      }
+    },
+    {
+      "name": "Salud",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Salud": 1.0
+      }
+    },
+    {
+      "name": "Ciencia",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Ciencia": 1.0
+      }
+    },
+    {
+      "name": "Tecnologia",
+      "topics": {
+        "https://es.wikipedia.org/wiki/Tic": 1.0
+      }
+    }
+  ]
+}

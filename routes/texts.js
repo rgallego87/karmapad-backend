@@ -4,7 +4,12 @@ const express = require('express');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID;
 const Texto = require('../models/text');
-const getFromAzure = require('../helper');
+const getFromAzure = require('../azure-helpers');
+// Dandelion Text Analysis API
+const dandelion = require("node-dandelion");
+dandelion.configure({  
+  "token": '5b859e710c694b4b8b109ade85e34081'  
+});
 
 // POST Creating on DB new Text
 router.post('/create', (req, res, next) => {
@@ -77,7 +82,7 @@ router.post('/:id/analyze', (req, res, next) => {
       if(!text) {
         throw {code: 'not-found', status: 404};
       }
-      textFound = text;
+      textFound = text;      
     })
     .then(() => {      
       let preDocuments_lang = { 'documents': [
@@ -132,5 +137,41 @@ router.post('/:id/analyze', (req, res, next) => {
     });
 });
 
+// POST to Dandelion using contextualize categories
+router.post('/:id/contextualize', (req, res, next) => {   
+  const { id } = req.params;  
+  let textFound = '';       
+  Texto.findById(id)
+    .then(text => {        
+      if(!text) {
+        throw {code: 'not-found', status: 404};
+      }
+      textFound = text;      
+    })    
+    .then(() => {      
+      let textPreCategory = {
+        "string":{
+          "type": "txt",
+          "value": textFound.textBody
+        },
+        "model": "8513d03c-7aaa-4599-b90e-f0ce012ab11b"
+      }
+      return new Promise((resolve,reject) => {
+        dandelion.txtCl(textPreCategory, (response, status) => {          
+          if (status === 200) {
+            return resolve(response);
+          } 
+          reject(response);
+         })
+      })              
+    })
+    .then(response => {      
+      res.status(200).json(response);                   
+    })      
+    .catch(error => {
+      console.log(error);
+      return res.status(error.status).send(error.code);
+    });
+});
 
 module.exports = router;
