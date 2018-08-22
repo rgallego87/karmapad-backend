@@ -44,6 +44,17 @@ router.get('/:id', (req, res, next) => {
       .catch(next);      
 });
 
+// POST Updating text by id on DB
+router.post('/:id', (req, res, next) => {
+  const { id } = req.params;
+  const { title, textBody } = req.body;
+  Job.findByIdAndUpdate(id, { title, textBody })
+      .then(() => {
+        res.status(200).json(response);
+      })
+      .catch(next);
+});
+
 // POST Deleting a single text on DB
 router.post('/:id/delete', (req, res, next) => {  
   Texto.findByIdAndRemove(req.params.id)
@@ -107,10 +118,12 @@ router.post('/:id/analyze', (req, res, next) => {
       }      
     })
     .then(() => {      
-      let response = {  documentProcessed, 
-                        language: language.name, 
-                        keyPhrases: keyPhrases,
-                        entities: entities };
+      let response = { 
+        documentProcessed, 
+        language: language.name, 
+        keyPhrases,
+        entities
+      };
       res.status(200).json(response);
     }) 
     .catch(error => {
