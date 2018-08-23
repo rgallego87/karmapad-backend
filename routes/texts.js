@@ -6,9 +6,9 @@ const ObjectId = require('mongodb').ObjectID;
 const Texto = require('../models/text');
 const getFromAzure = require('../azure-helpers');
 // Dandelion Text Analysis API
-const dandelion = require("node-dandelion");
+const dandelion = require("../fixed_packs/node-dandelion");
 dandelion.configure({  
-  "token": '5b859e710c694b4b8b109ade85e34081'  
+  "token": process.env.DANDELION_API_KEY  
 });
 
 // POST Creating on DB new Text

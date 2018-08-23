@@ -22,7 +22,8 @@
     "http-errors": "~1.6.2",
     "mongoose": "^5.2.7",
     "morgan": "~1.9.0",
-    "node-dandelion": "^1.0.2"
+    "node-dandelion": "^1.0.2",
+    "request": "1.9.x"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"
